@@ -1,7 +1,7 @@
 import pygame
 
 from pygame.locals import *
-from main import TILE_WIDTH, TILE_HEIGHT, GREEN
+from main import TILE_WIDTH, TILE_HEIGHT, GREEN, SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class Player(pygame.sprite.Sprite):
@@ -45,5 +45,10 @@ class Player(pygame.sprite.Sprite):
     def add_segment(self):
         self.body.insert(0, pygame.Rect(self.body[0].left + self.velocity[0], self.body[0].top + self.velocity[1], TILE_WIDTH, TILE_HEIGHT))
 
-    def self_collide(self):
+    def is_dead(self):
+        return self.rect.left < 0 or self.rect.right > SCREEN_WIDTH \
+            or self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT \
+            or self._self_collide()
+
+    def _self_collide(self):
         return len(self.body) > 1 and self.rect.collidelist(self.body[1:]) >= 0
