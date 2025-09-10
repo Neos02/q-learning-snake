@@ -28,7 +28,7 @@ class Agent:
         self.epsilon = 0.2
         self.epsilon_discount = 0.9992
         self.min_epsilon = 0.001
-        self.num_episodes = 10000
+        self.num_epochs = 10000
         self.table = np.zeros((2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3))
         self.game = Game(is_agent=True)
         self.score = []
@@ -46,12 +46,12 @@ class Agent:
         # select best action (exploitation)
         return np.argmax(self.table[state])
 
-    def train_from_episode(self, episode=1):
-        self._load_model(episode)
-        self.train(episode)
+    def train_from_epoch(self, epoch=1):
+        self._load_model(epoch)
+        self.train(epoch)
 
-    def train(self, episode=1):
-        for i in range(episode, self.num_episodes + 1):
+    def train(self, epoch=1):
+        for i in range(epoch, self.num_epochs + 1):
             is_checkpoint = (i < 100 and i % 10 == 0) or (100 <= i < 1000 and i % 200 == 0) or (
                         i >= 1000 and i % 500 == 0)
             steps_without_food = 0
@@ -61,7 +61,7 @@ class Agent:
             # print updates
             if i % 25 == 0 and len(self.score) > 0:
                 print(
-                    f"Episodes: {i}, score: {np.mean(self.score)}, survived: {np.mean(self.survived)}, epsilon: {self.epsilon}, learning_rate: {self.learning_rate}")
+                    f"Epochs: {i}, score: {np.mean(self.score)}, survived: {np.mean(self.survived)}, epsilon: {self.epsilon}, learning_rate: {self.learning_rate}")
                 self.score = []
                 self.survived = []
 
@@ -107,8 +107,8 @@ class Agent:
             self.score.append(self.game.player.length)
             self.survived.append(self.game.survived)
 
-    def run_episode(self, episode):
-        self._load_model(episode)
+    def run_epoch(self, epoch):
+        self._load_model(epoch)
         self.game = Game(is_agent=True)
         current_state = self.game.get_state()
 
@@ -122,11 +122,11 @@ class Agent:
 
             CLOCK.tick(FPS)
 
-    def _load_model(self, episode):
-        filename = f'{self.model_dir}/snake_model_{episode}.pickle'
+    def _load_model(self, epoch):
+        filename = f'{self.model_dir}/snake_model_{epoch}.pickle'
 
         with open(filename, 'rb') as file:
             self.table = pickle.load(file)
 
-        # calculate this episode's epsilon value to prevent random actions
-        self.epsilon = max(self.epsilon * self.epsilon_discount ** episode, self.min_epsilon)
+        # calculate this epoch's epsilon value to prevent random actions
+        self.epsilon = max(self.epsilon * self.epsilon_discount ** epoch, self.min_epsilon)
