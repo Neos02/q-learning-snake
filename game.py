@@ -1,4 +1,5 @@
 import random
+import sys
 import time
 import pygame
 
@@ -20,6 +21,7 @@ def game_over():
     pygame.display.update()
     time.sleep(2)
     pygame.quit()
+    sys.exit()
 
 
 class Game:
