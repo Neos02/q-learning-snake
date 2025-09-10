@@ -1,3 +1,4 @@
+import random
 import time
 import pygame
 
@@ -6,6 +7,9 @@ from apple import Apple
 from main import DISPLAYSURF, FONT_SMALL, WHITE, BLACK, SCREEN_WIDTH, SCREEN_HEIGHT, RED, FONT_LARGE, CLOCK, FPS, \
     TILE_WIDTH, TILE_HEIGHT
 from player import Player
+
+
+SNAKE_VELOCITIES = [(-TILE_WIDTH, 0), (0, -TILE_HEIGHT), (TILE_WIDTH, 0), (0, TILE_HEIGHT)]
 
 
 def game_over():
@@ -66,18 +70,17 @@ class Game:
         reward = 0
         is_dead = False
 
-        if action == 0 and self.player.velocity[0] == 0:
-            # move left
-            self.player.velocity = (-TILE_WIDTH, 0)
-        elif action == 1 and self.player.velocity[1] == 0:
-            # move up
-            self.player.velocity = (0, -TILE_HEIGHT)
-        elif action == 2 and self.player.velocity[0] == 0:
-            # move right
-            self.player.velocity = (TILE_WIDTH, 0)
-        elif action == 3 and self.player.velocity[1] == 0:
-            # move down
-            self.player.velocity = (0, TILE_HEIGHT)
+        if self.player.velocity == (0, 0):
+            self.player.velocity = random.choice(SNAKE_VELOCITIES)
+
+        current_velocity_index = SNAKE_VELOCITIES.index(self.player.velocity)
+
+        if action == 0:
+            # turn left relative to the snake
+            self.player.velocity = SNAKE_VELOCITIES[(current_velocity_index - 1) % len(SNAKE_VELOCITIES)]
+        elif action == 2:
+            # turn right relative to the snake
+            self.player.velocity = SNAKE_VELOCITIES[(current_velocity_index + 1) % len(SNAKE_VELOCITIES)]
 
         self.player.move()
 
