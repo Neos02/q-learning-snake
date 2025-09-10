@@ -1,4 +1,5 @@
 import pygame
+import argparse
 
 pygame.init()
 
@@ -24,7 +25,31 @@ SCREEN_HEIGHT = TILE_HEIGHT * ROW_COUNT
 DISPLAYSURF = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Snake')
 
+
 if __name__ == "__main__":
+    from game import Game
     from agent import Agent
-    agent = Agent()
-    agent.train_from_episode(7500)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mode', '-m', type=int, choices=[0, 1, 2, 3], default=0, help='0 - Play Snake, 1 - Train Agent from Scratch, 2 - Continue Training Agent from Existing Model, 3 - Run Existing Model')
+    parser.add_argument('--episode', '-e', type=int, help='Episode number to load')
+    args = parser.parse_args()
+
+    if args.mode == 0:
+        game = Game()
+        game.run()
+    elif args.mode == 1:
+        agent = Agent()
+        agent.train()
+    elif args.mode == 2:
+        if args.episode is None:
+            parser.error('Episode number must be specified')
+
+        agent = Agent()
+        agent.train_from_episode(args.episode)
+    elif args.mode == 3:
+        if args.episode is None:
+            parser.error('Episode number must be specified')
+
+        agent = Agent()
+        agent.run_episode(args.episode)
