@@ -52,14 +52,14 @@ class Game:
 
     def get_state(self):
         return (
-            1 if self.player.velocity[0] < 0 else 0,  # moving left
-            1 if self.player.velocity[1] < 0 else 0,  # moving up
-            1 if self.player.velocity[0] > 0 else 0,  # moving right
-            1 if self.player.velocity[1] > 0 else 0,  # moving down
-            1 if self.apple.rect.left < self.player.rect.left else 0,  # apple left of snake
-            1 if self.apple.rect.top < self.player.rect.top else 0,  # apple above snake
-            1 if self.apple.rect.left > self.player.rect.left else 0,  # apple right of snake
-            1 if self.apple.rect.top > self.player.rect.top else 0,  # apple below snake
+            int(self.player.velocity[0] < 0),  # moving left
+            int(self.player.velocity[1] < 0),  # moving up
+            int(self.player.velocity[0] > 0),  # moving right
+            int(self.player.velocity[1] > 0),  # moving down
+            int(self.apple.rect.left < self.player.rect.left),  # apple left of snake
+            int(self.apple.rect.top < self.player.rect.top),  # apple above snake
+            int(self.apple.rect.left > self.player.rect.left),  # apple right of snake
+            int(self.apple.rect.top > self.player.rect.top),  # apple below snake
             self._is_dangerous((-TILE_WIDTH, 0)),  # danger left
             self._is_dangerous((0, -TILE_HEIGHT)),  # danger above
             self._is_dangerous((TILE_WIDTH, 0)),  # danger right
