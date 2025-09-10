@@ -41,8 +41,33 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.body[0]
 
     def draw(self, surface):
-        for rect in self.body:
-            pygame.draw.rect(surface, GREEN, rect)
+        for i, rect in enumerate(self.body):
+            rect_to_draw = pygame.Rect(
+                rect.left + 1,
+                rect.top + 1,
+                rect.width - 2,
+                rect.height - 2
+            )
+
+            # make every segment connect to the previous segment
+            if i != len(self.body) - 1:
+                next_rect = self.body[i + 1]
+
+                if next_rect.top == rect.top:
+                    if next_rect.left != rect.left:
+                        rect_to_draw.width += 2
+
+                    if next_rect.left < rect.left:
+                        rect_to_draw.left -= 2
+
+                if next_rect.left == rect.left:
+                    if next_rect.top != rect.top:
+                        rect_to_draw.height += 2
+
+                    if next_rect.top < rect.top:
+                        rect_to_draw.top -= 2
+
+            pygame.draw.rect(surface, GREEN, rect_to_draw)
 
     def add_segment(self):
         self.body.insert(0, pygame.Rect(self.body[0].left + self.velocity[0], self.body[0].top + self.velocity[1], TILE_WIDTH, TILE_HEIGHT))
