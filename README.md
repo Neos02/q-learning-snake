@@ -20,4 +20,4 @@ Run with `--mode 3` or `-m 3` and provide an episode number to load using `--epi
 
 ## Additional Options
 
-- `--model-dir`|`-d`: the directory to store the models in
+- `--model-dir {directory}`|`-d {directory}`: the directory to store the models in
