@@ -17,3 +17,7 @@ Run with `--mode 2` or `-m 2` and provide an episode number to load using `--epi
 ## Load and Run from Existing Model
 
 Run with `--mode 3` or `-m 3` and provide an episode number to load using `--episode {number}` or `-e {number}`. If the model exists it will be loaded from the file and will play one game.
+
+## Additional Options
+
+- `--model-dir`|`-d`: the directory to store the models in
