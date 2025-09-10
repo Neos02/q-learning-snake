@@ -22,8 +22,10 @@ class Agent:
 
     def __init__(self, model_dir):
         self.discount_rate = 0.95
-        self.learning_rate = 0.01
-        self.epsilon = 1.0
+        self.learning_rate = 0.9
+        self.learning_rate_decay = 0.9
+        self.min_learning_rate = 0.1
+        self.epsilon = 0.2
         self.epsilon_discount = 0.9992
         self.min_epsilon = 0.001
         self.num_episodes = 10000
@@ -71,6 +73,7 @@ class Agent:
 
             current_state = self.game.get_state()
             self.epsilon = max(self.epsilon * self.epsilon_discount, self.min_epsilon)
+            self.learning_rate = max(self.learning_rate * self.learning_rate_decay, self.min_learning_rate)
 
             done = False
             while not done:
