@@ -104,7 +104,7 @@ class Agent:
                     break
 
             # keep track of important metrics
-            self.score.append(self.game.player.length)
+            self.score.append(self.game.player.length - self.game.player.start_length)
             self.survived.append(self.game.survived)
 
     def run_epoch(self, epoch):

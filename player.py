@@ -11,7 +11,8 @@ class Player(pygame.sprite.Sprite):
         self.body = [pygame.Rect(TILE_WIDTH * COLUMN_COUNT // 2, TILE_HEIGHT * ROW_COUNT // 2, TILE_WIDTH, TILE_HEIGHT)]
         self.rect = self.body[0]
         self.velocity = (0, 0)
-        self.length = 5
+        self.start_length = 5
+        self.length = self.start_length
         self.is_agent = is_agent
 
     def move(self):
