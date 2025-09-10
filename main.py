@@ -25,6 +25,6 @@ DISPLAYSURF = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption('Snake')
 
 if __name__ == "__main__":
-    from game import Game
-    game = Game()
-    game.run()
+    from agent import Agent
+    agent = Agent()
+    agent.train_from_episode(7500)
