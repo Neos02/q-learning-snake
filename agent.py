@@ -44,11 +44,11 @@ class Agent:
         self.train(episode)
 
     def train(self, episode=1):
-        for i in range(episode, self.num_episodes):
-            self.game = Game(is_agent=True)
+        for i in range(episode, self.num_episodes + 1):
+            is_checkpoint = (i < 100 and i % 10 == 0) or (100 <= i < 1000 and i % 200 == 0) or (i >= 1000 and i % 500 == 0)
             steps_without_food = 0
             length = self.game.player.length
-            is_checkpoint = (i < 100 and i % 10 == 0) or (100 <= i < 1000 and i % 200 == 0) or (i >= 1000 and i % 500 == 0)
+            self.game = Game(is_agent=True, draw=is_checkpoint)
 
             # print updates
             if i % 25 == 0 and len(self.score) > 0:

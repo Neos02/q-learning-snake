@@ -20,10 +20,11 @@ def game_over():
 
 class Game:
 
-    def __init__(self, is_agent=False):
+    def __init__(self, is_agent=False, draw=True):
         self.apple = Apple()
         self.player = Player(is_agent)
         self.survived = 0
+        self.draw = draw
 
     def run(self):
         while True:
@@ -92,7 +93,6 @@ class Game:
             is_dead = True
 
         self.survived += 1
-        pygame.display.update()
 
         return self.get_state(), reward, is_dead
 
@@ -104,9 +104,14 @@ class Game:
                     or next_step.collidelist(self.player.body) >= 0 else 0
 
     def _draw(self):
+        if not self.draw:
+            return
+
         DISPLAYSURF.fill(BLACK)
         self.apple.draw(DISPLAYSURF)
         self.player.draw(DISPLAYSURF)
 
         score = FONT_SMALL.render("Score: " + str(self.player.length), True, WHITE)
         DISPLAYSURF.blit(score, (SCREEN_WIDTH - 100, 10))
+
+        pygame.display.update()
