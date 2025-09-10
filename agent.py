@@ -22,14 +22,14 @@ class Agent:
 
     def __init__(self, model_dir):
         self.discount_rate = 0.95
-        self.learning_rate = 0.9
-        self.learning_rate_decay = 0.9
-        self.min_learning_rate = 0.1
+        self.learning_rate = 1
+        self.learning_rate_decay = 0.99
+        self.min_learning_rate = 0.01
         self.epsilon = 0.2
         self.epsilon_discount = 0.9992
         self.min_epsilon = 0.001
         self.num_episodes = 10000
-        self.table = np.zeros((2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4))
+        self.table = np.zeros((2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3))
         self.game = Game(is_agent=True)
         self.score = []
         self.survived = []
@@ -41,7 +41,7 @@ class Agent:
     def get_action(self, state):
         # select random action (exploration)
         if random.random() < self.epsilon:
-            return random.choice([0, 1, 2, 3])
+            return random.choice([0, 1, 2])
 
         # select best action (exploitation)
         return np.argmax(self.table[state])
@@ -91,7 +91,8 @@ class Agent:
 
                 # slow down to display the checkpoint models
                 if is_checkpoint:
-                    CLOCK.tick(FPS)
+                    # CLOCK.tick(FPS)
+                    pass
 
                 steps_without_food += 1
 
