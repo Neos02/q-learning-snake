@@ -1,14 +1,14 @@
 import pygame
 
 from pygame.locals import *
-from main import TILE_WIDTH, TILE_HEIGHT, GREEN, SCREEN_WIDTH, SCREEN_HEIGHT
+from main import TILE_WIDTH, TILE_HEIGHT, GREEN, SCREEN_WIDTH, SCREEN_HEIGHT, ROW_COUNT, COLUMN_COUNT
 
 
 class Player(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        self.body = [pygame.Rect(0, 0, TILE_WIDTH, TILE_HEIGHT)]
+        self.body = [pygame.Rect(TILE_WIDTH * COLUMN_COUNT // 2, TILE_HEIGHT * ROW_COUNT // 2, TILE_WIDTH, TILE_HEIGHT)]
         self.rect = self.body[0]
         self.velocity = (0, 0)
         self.length = 5
