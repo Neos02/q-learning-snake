@@ -33,23 +33,24 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--mode', '-m', type=int, choices=[0, 1, 2, 3], default=0, help='0 - Play Snake, 1 - Train Agent from Scratch, 2 - Continue Training Agent from Existing Model, 3 - Run Existing Model')
     parser.add_argument('--episode', '-e', type=int, help='Episode number to load')
+    parser.add_argument('--model-dir', '-d', type=str, help='Directory to save and load models', default='models')
     args = parser.parse_args()
 
     if args.mode == 0:
         game = Game()
         game.run()
     elif args.mode == 1:
-        agent = Agent()
+        agent = Agent(model_dir=args.model_dir)
         agent.train()
     elif args.mode == 2:
         if args.episode is None:
-            parser.error('Episode number must be specified')
+            parser.error('--episode must be specified')
 
-        agent = Agent()
+        agent = Agent(model_dir=args.model_dir)
         agent.train_from_episode(args.episode)
     elif args.mode == 3:
         if args.episode is None:
-            parser.error('Episode number must be specified')
+            parser.error('--episode must be specified')
 
-        agent = Agent()
+        agent = Agent(model_dir=args.model_dir)
         agent.run_episode(args.episode)

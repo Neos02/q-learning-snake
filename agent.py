@@ -19,7 +19,7 @@ def _handle_events():
 
 class Agent:
 
-    def __init__(self):
+    def __init__(self, model_dir):
         self.discount_rate = 0.95
         self.learning_rate = 0.01
         self.epsilon = 1.0
@@ -30,6 +30,7 @@ class Agent:
         self.game = Game(is_agent=True)
         self.score = []
         self.survived = []
+        self.model_dir = model_dir
 
     def get_action(self, state):
         # select random action (exploration)
@@ -59,7 +60,7 @@ class Agent:
 
             # occasionally save latest model
             if is_checkpoint:
-                with open(f'pickle/snake_model_{i}.pickle', 'wb') as file:
+                with open(f'{self.model_dir}/snake_model_{i}.pickle', 'wb') as file:
                     # noinspection PyTypeChecker
                     pickle.dump(self.table, file)
 
@@ -114,7 +115,7 @@ class Agent:
             CLOCK.tick(FPS)
 
     def _load_model(self, episode):
-        filename = f'pickle/snake_model_{episode}.pickle'
+        filename = f'{self.model_dir}/snake_model_{episode}.pickle'
 
         with open(filename, 'rb') as file:
             self.table = pickle.load(file)
