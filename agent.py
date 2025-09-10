@@ -1,3 +1,4 @@
+import os
 import random
 import sys
 
@@ -32,6 +33,9 @@ class Agent:
         self.survived = []
         self.model_dir = model_dir
 
+        if not os.path.exists(self.model_dir):
+            os.makedirs(self.model_dir)
+
     def get_action(self, state):
         # select random action (exploration)
         if random.random() < self.epsilon:
@@ -46,7 +50,8 @@ class Agent:
 
     def train(self, episode=1):
         for i in range(episode, self.num_episodes + 1):
-            is_checkpoint = (i < 100 and i % 10 == 0) or (100 <= i < 1000 and i % 200 == 0) or (i >= 1000 and i % 500 == 0)
+            is_checkpoint = (i < 100 and i % 10 == 0) or (100 <= i < 1000 and i % 200 == 0) or (
+                        i >= 1000 and i % 500 == 0)
             steps_without_food = 0
             length = self.game.player.length
             self.game = Game(is_agent=True, draw=is_checkpoint)
@@ -76,9 +81,9 @@ class Agent:
                 new_state, reward, done = self.game.step(action)
 
                 # Bellman equation update
-                self.table[current_state][action] = (1 - self.learning_rate) \
-                    * self.table[current_state][action] + self.learning_rate \
-                    * (reward + self.discount_rate * max(self.table[new_state]))
+                self.table[current_state][action] += self.learning_rate * \
+                    (reward + self.discount_rate * np.max(self.table[new_state]) -
+                     self.table[current_state][action])
                 current_state = new_state
 
                 # slow down to display the checkpoint models
