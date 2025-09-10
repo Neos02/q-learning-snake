@@ -116,7 +116,7 @@ class Game:
         self.apple.draw(DISPLAYSURF)
         self.player.draw(DISPLAYSURF)
 
-        score = FONT_SMALL.render("Score: " + str(self.player.length), True, WHITE)
+        score = FONT_SMALL.render("Score: " + str(self.player.length - self.player.start_length), True, WHITE)
         DISPLAYSURF.blit(score, (SCREEN_WIDTH - 100, 10))
 
         pygame.display.update()
