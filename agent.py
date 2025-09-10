@@ -10,6 +10,13 @@ from game import Game
 from main import CLOCK, FPS
 
 
+def _handle_events():
+    for event in pygame.event.get():
+        if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+            pygame.quit()
+            sys.exit()
+
+
 class Agent:
 
     def __init__(self):
@@ -20,7 +27,7 @@ class Agent:
         self.min_epsilon = 0.001
         self.num_episodes = 10000
         self.table = np.zeros((2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4))
-        self.game = Game()
+        self.game = Game(is_agent=True)
         self.score = []
         self.survived = []
 
@@ -38,9 +45,10 @@ class Agent:
 
     def train(self, episode=1):
         for i in range(episode, self.num_episodes):
-            self.game = Game()
+            self.game = Game(is_agent=True)
             steps_without_food = 0
             length = self.game.player.length
+            is_checkpoint = (i < 100 and i % 10 == 0) or (100 <= i < 1000 and i % 200 == 0) or (i >= 1000 and i % 500 == 0)
 
             # print updates
             if i % 25 == 0 and len(self.score) > 0:
@@ -50,8 +58,9 @@ class Agent:
                 self.survived = []
 
             # occasionally save latest model
-            if (i < 100 and i % 10 == 0) or (100 <= i < 1000 and i % 200 == 0) or (i >= 1000 and i % 500 == 0):
+            if is_checkpoint:
                 with open(f'pickle/snake_model_{i}.pickle', 'wb') as file:
+                    # noinspection PyTypeChecker
                     pickle.dump(self.table, file)
 
             current_state = self.game.get_state()
@@ -59,10 +68,7 @@ class Agent:
 
             done = False
             while not done:
-                for event in pygame.event.get():
-                    if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                        pygame.quit()
-                        sys.exit()
+                _handle_events()
 
                 # choose action and take it
                 action = self.get_action(current_state)
@@ -70,11 +76,12 @@ class Agent:
 
                 # Bellman equation update
                 self.table[current_state][action] = (1 - self.learning_rate) \
-                                                    * self.table[current_state][action] + self.learning_rate \
-                                                    * (reward + self.discount_rate * max(self.table[new_state]))
+                    * self.table[current_state][action] + self.learning_rate \
+                    * (reward + self.discount_rate * max(self.table[new_state]))
                 current_state = new_state
 
-                if i % 100 == 0:
+                # slow down to display the checkpoint models
+                if is_checkpoint:
                     CLOCK.tick(FPS)
 
                 steps_without_food += 1
@@ -93,15 +100,12 @@ class Agent:
 
     def run_episode(self, episode):
         self._load_model(episode)
-        self.game = Game()
+        self.game = Game(is_agent=True)
         current_state = self.game.get_state()
 
         done = False
         while not done:
-            for event in pygame.event.get():
-                if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
-                    pygame.quit()
-                    sys.exit()
+            _handle_events()
 
             # choose action and take it
             action = self.get_action(current_state)
@@ -115,4 +119,5 @@ class Agent:
         with open(filename, 'rb') as file:
             self.table = pickle.load(file)
 
+        # calculate this episode's epsilon value to prevent random actions
         self.epsilon = max(self.epsilon * self.epsilon_discount ** episode, self.min_epsilon)

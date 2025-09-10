@@ -8,11 +8,21 @@ from main import DISPLAYSURF, FONT_SMALL, WHITE, BLACK, SCREEN_WIDTH, SCREEN_HEI
 from player import Player
 
 
+def game_over():
+    game_over_text = FONT_LARGE.render("Game Over", True, WHITE)
+    DISPLAYSURF.fill(RED)
+    DISPLAYSURF.blit(game_over_text, (SCREEN_WIDTH / 2 - game_over_text.get_width() / 2,
+                                      SCREEN_HEIGHT / 2 - game_over_text.get_height() / 2))
+    pygame.display.update()
+    time.sleep(2)
+    pygame.quit()
+
+
 class Game:
 
-    def __init__(self):
+    def __init__(self, is_agent=False):
         self.apple = Apple()
-        self.player = Player()
+        self.player = Player(is_agent)
         self.survived = 0
 
     def run(self):
@@ -27,27 +37,13 @@ class Game:
                 self.apple = Apple()
                 self.player.length += 1
 
-            DISPLAYSURF.fill(BLACK)
-            self.apple.draw(DISPLAYSURF)
-            self.player.draw(DISPLAYSURF)
-
-            score = FONT_SMALL.render("Score: " + str(self.player.length), True, WHITE)
-            DISPLAYSURF.blit(score, (SCREEN_WIDTH - 100, 10))
+            self._draw()
 
             if self.player.is_dead():
-                self.game_over()
+                game_over()
 
             pygame.display.update()
             CLOCK.tick(FPS)
-
-    def game_over(self):
-        game_over_text = FONT_LARGE.render("Game Over", True, WHITE)
-        DISPLAYSURF.fill(RED)
-        DISPLAYSURF.blit(game_over_text, (SCREEN_WIDTH / 2 - game_over_text.get_width() / 2,
-                                          SCREEN_HEIGHT / 2 - game_over_text.get_height() / 2))
-        pygame.display.update()
-        time.sleep(2)
-        pygame.quit()
 
     def get_state(self):
         return (
@@ -67,7 +63,7 @@ class Game:
 
     def step(self, action):
         reward = 0
-        game_over = False
+        is_dead = False
 
         if action == 0 and self.player.velocity[0] == 0:
             # move left
@@ -89,22 +85,16 @@ class Game:
             self.player.length += 1
             reward = 1
 
-        DISPLAYSURF.fill(BLACK)
-        self.apple.draw(DISPLAYSURF)
-        self.player.draw(DISPLAYSURF)
-
-        score = FONT_SMALL.render("Score: " + str(self.player.length), True, WHITE)
-        DISPLAYSURF.blit(score, (SCREEN_WIDTH - 100, 10))
+        self._draw()
 
         if self.player.is_dead():
             reward = -10
-            game_over = True
+            is_dead = True
 
         self.survived += 1
-
         pygame.display.update()
 
-        return self.get_state(), reward, game_over
+        return self.get_state(), reward, is_dead
 
     def _is_dangerous(self, velocity):
         next_step = pygame.Rect(self.player.rect.left + velocity[0], self.player.rect.top + velocity[1], TILE_WIDTH, TILE_HEIGHT)
@@ -112,3 +102,11 @@ class Game:
         return 1 if next_step.left < 0 or next_step.right > SCREEN_WIDTH \
                     or next_step.top < 0 or next_step.bottom > SCREEN_HEIGHT \
                     or next_step.collidelist(self.player.body) >= 0 else 0
+
+    def _draw(self):
+        DISPLAYSURF.fill(BLACK)
+        self.apple.draw(DISPLAYSURF)
+        self.player.draw(DISPLAYSURF)
+
+        score = FONT_SMALL.render("Score: " + str(self.player.length), True, WHITE)
+        DISPLAYSURF.blit(score, (SCREEN_WIDTH - 100, 10))
