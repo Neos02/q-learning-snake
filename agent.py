@@ -88,8 +88,7 @@ class Agent:
 
                 # slow down to display the checkpoint models
                 if is_checkpoint:
-                    # CLOCK.tick(FPS)
-                    pass
+                    CLOCK.tick(FPS)
 
                 steps_without_food += 1
 

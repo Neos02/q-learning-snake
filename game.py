@@ -76,6 +76,7 @@ class Game:
             self.player.velocity = random.choice(SNAKE_VELOCITIES)
 
         current_velocity_index = SNAKE_VELOCITIES.index(self.player.velocity)
+        current_distance_squared = self._get_player_apple_distance_squared()
 
         if action == 0:
             # turn left relative to the snake
@@ -86,15 +87,18 @@ class Game:
 
         self.player.move()
 
+        if self._get_player_apple_distance_squared() < current_distance_squared:
+            reward = 1
+
         if pygame.sprite.collide_rect(self.player, self.apple):
             self.apple = Apple()
             self.player.length += 1
-            reward = 1
+            reward = 10
 
         self._draw()
 
         if self.player.is_dead():
-            reward = -10
+            reward = -100
             is_dead = True
 
         self.survived += 1
@@ -120,3 +124,6 @@ class Game:
         DISPLAYSURF.blit(score, (SCREEN_WIDTH - 100, 10))
 
         pygame.display.update()
+
+    def _get_player_apple_distance_squared(self):
+        return (self.player.rect.left - self.apple.rect.left) ** 2 + (self.player.rect.top - self.apple.rect.top) ** 2
