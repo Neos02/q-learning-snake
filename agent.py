@@ -22,9 +22,7 @@ class Agent:
 
     def __init__(self, model_dir):
         self.discount_rate = 0.95
-        self.learning_rate = 1
-        self.learning_rate_decay = 0.99
-        self.min_learning_rate = 0.01
+        self.learning_rate = 0.01
         self.epsilon = 0.2
         self.epsilon_discount = 0.9992
         self.min_epsilon = 0.001
@@ -73,7 +71,6 @@ class Agent:
 
             current_state = self.game.get_state()
             self.epsilon = max(self.epsilon * self.epsilon_discount, self.min_epsilon)
-            self.learning_rate = max(self.learning_rate * self.learning_rate_decay, self.min_learning_rate)
 
             done = False
             while not done:
@@ -91,7 +88,8 @@ class Agent:
 
                 # slow down to display the checkpoint models
                 if is_checkpoint:
-                    CLOCK.tick(FPS)
+                    # CLOCK.tick(FPS)
+                    pass
 
                 steps_without_food += 1
 

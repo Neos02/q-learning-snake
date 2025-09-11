@@ -8,7 +8,7 @@ class Apple(pygame.sprite.Sprite):
 
     def __init__(self):
         super().__init__()
-        self.rect = pygame.Rect(0, 0, TILE_WIDTH, TILE_HEIGHT)
+        self.rect = pygame.Rect(1, 1, TILE_WIDTH - 1, TILE_HEIGHT - 1)
         self.rect.center = (random.randint(0, COLUMN_COUNT - 1) * TILE_WIDTH + TILE_WIDTH // 2,
                             random.randint(0, ROW_COUNT - 1) * TILE_HEIGHT + TILE_HEIGHT // 2)
 
